@@ -4,13 +4,16 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 interface Props {
   handleOnPress: () => void;
   title: string;
-  buttonStyle:Object
+  buttonStyle?: Object;
 }
 
 export default function Button({ handleOnPress, title, buttonStyle }: Props) {
   return (
-    <View style={{width:'100%',alignItems:'center'}}>
-      <TouchableOpacity style={[styles.loginContainer, buttonStyle]} onPress={handleOnPress}>
+    <View style={{ width: '100%', alignItems: 'center' }}>
+      <TouchableOpacity
+        style={[styles.loginContainer, buttonStyle]}
+        onPress={handleOnPress}
+      >
         <Text
           style={{
             color: 'white',
@@ -36,5 +39,4 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     borderRadius: 8,
   },
- 
 });
