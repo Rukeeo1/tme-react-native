@@ -6,17 +6,20 @@ import {
   ImageBackground,
   Image,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 // import { TouchableOpacity } from 'react-native-gesture-handler';
+// navigation
+import { useNavigation } from '@react-navigation/native';
 
 const imageSource =
   'https://media-cdn.tripadvisor.com/media/photo-s/01/37/60/0c/me-and-my-husband-lekki.jpg';
 
 export default function TodoDetails() {
+  const navigation = useNavigation();
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
@@ -58,8 +61,11 @@ export default function TodoDetails() {
           </View>
         </View>
       </ScrollView>
-      <View style={{ position: 'absolute', bottom: 10,left:10 }}>
-        <TouchableOpacity style={styles.iconWrapper}>
+      <View style={{ position: 'absolute', bottom: 10, left: 10 }}>
+        <TouchableOpacity
+          style={styles.iconWrapper}
+          onPress={() => navigation.navigate('AddTodo')}
+        >
           <Entypo name="add-to-list" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.iconWrapper}>
@@ -108,6 +114,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical:4
+    marginVertical: 4,
   },
 });
