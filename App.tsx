@@ -6,6 +6,7 @@ import Login from './screens/Login';
 import SignUp from './screens/SignUp';
 import Todos from './screens/Todos';
 import TodoDetails from './screens/TodoDetails'
+import AddTodo from './screens/AddTodo'
 
 //mapping for routes...
 export type RootStackParamList = {
@@ -13,6 +14,7 @@ export type RootStackParamList = {
   SignUp: undefined;
   Todos: undefined;
   TodoDetails: undefined;
+  AddTodo: undefined
 };
 
 // create stack navigator
@@ -53,7 +55,10 @@ export default function App() {
         <Screen
           name="TodoDetails"
           component={TodoDetails}
-
+        />
+        <Screen
+          name="AddTodo"
+          component={AddTodo}
         />
       </Navigator>
     </NavigationContainer>
