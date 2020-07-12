@@ -18,6 +18,10 @@ import Input from '../components/Input';
 import Rating from '../components/Rating';
 import Button from '../components/Button';
 
+//redux
+import {useDispatch} from 'react-redux'
+import {addTodo} from '../store/actions/todos'
+
 export default function AddTodo() {
   const [ratingValue, saveRatingValue] = useState(2);
   const [date, setDate] = useState(new Date(1598051730000));
@@ -37,7 +41,8 @@ export default function AddTodo() {
       ...todo,
       [inputName]: e,
     });
-  }; // i have a handle change...
+  }; 
+  const dispatch = useDispatch()
   const submitTodo = () => {
     const todoItem = {
       title: todo.title,
@@ -47,6 +52,7 @@ export default function AddTodo() {
       dueDate: date,
       isCompleted: false
     };
+    dispatch(addTodo(todoItem))
   };
   return (
     <View style={styles.container}>
