@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,19 +7,73 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-// import { TouchableOpacity } from 'react-native-gesture-handler';
-// navigation
-import { useNavigation } from '@react-navigation/native';
+import { CheckBox } from 'react-native-elements'; // 0.16.0
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+// navigation
+import { useNavigation, useRoute } from '@react-navigation/native';
+
+//redux
+import { updateTodo, deleteTodo } from '../store/actions/todos';
+import { useDispatch, useSelector } from 'react-redux';
 const imageSource =
   'https://media-cdn.tripadvisor.com/media/photo-s/01/37/60/0c/me-and-my-husband-lekki.jpg';
 
 export default function TodoDetails() {
   const navigation = useNavigation();
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const { todos } = useSelector((state) => state.todos);
+
+  const { params } = route;
+
+  //find object from state
+  const todo = todos.filter((todo) => todo.id === params?.id);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ paddingRight: 15 }}>
+          <MaterialCommunityIcons
+            name="delete-outline"
+            size={24}
+            color="grey"
+            onPress={() => handleDeleteTodo(params?.id)}
+          />
+        </View>
+      ),
+    });
+  }, []);
+
+  const handleToggleComplete = (e) => {
+    let updateTodoObject = {
+      ...params,
+    };
+    if (e) {
+      updateTodoObject.isCompleted = false;
+    } else {
+      updateTodoObject.isCompleted = true;
+    }
+    dispatch(updateTodo(updateTodoObject));
+  };
+
+  const handleDeleteTodo = (todoId) => {
+    Alert.alert('', 'Are you sure, you want to delete this todo?', [
+      {
+        text: 'Dismiss',
+      },
+      {
+        text: 'Delete',
+        onPress: () => dispatch(deleteTodo(todoId, navigation)),
+      },
+    ]);
+  };
+
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
@@ -35,13 +89,27 @@ export default function TodoDetails() {
               colors={['rgba(0,0,0,0.4)', 'transparent', 'rgba(0,0,0,0.9)']}
               style={styles.linearGradient}
             >
-              <Text style={styles.title}>Hello</Text>
+              <Text style={styles.title}>{todo[0]?.title}</Text>
+              <Text style={styles.title}>
+                {new Date(todo[0]?.dueDate).toDateString()}
+              </Text>
             </LinearGradient>
           </ImageBackground>
           <View>
-            <Text style={{ fontWeight: '600', fontSize: 16, marginTop: 10 }}>
-              Description
-            </Text>
+            <View>
+              <CheckBox
+                title={todo[0]?.isCompleted ? 'Completed' : 'Mark as complete'}
+                checked={todo[0]?.isCompleted || false}
+                onPress={() => handleToggleComplete(todo[0]?.isCompleted)}
+              />
+            </View>
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            >
+              <Text style={{ fontWeight: '600', fontSize: 16, marginTop: 10 }}>
+                Description
+              </Text>
+            </View>
             <Text
               style={{
                 fontWeight: '300',
@@ -52,11 +120,7 @@ export default function TodoDetails() {
                 lineHeight: 20,
               }}
             >
-              UseEffect is here for all side effects. Adding event listeners,
-              changing things in the document, fetching data. Everything you
-              would use component lifecycle methods for (componentDidUpdate,
-              componentDidMount, componentWillUnmount) The method signature is
-              pretty straightforward. It accepts two parameters:
+              {todo[0]?.description}
             </Text>
           </View>
         </View>
@@ -68,9 +132,12 @@ export default function TodoDetails() {
         >
           <Entypo name="add-to-list" size={24} color="#fff" />
         </TouchableOpacity>
-        <View style={styles.iconWrapper}>
+        <TouchableOpacity
+          style={styles.iconWrapper}
+          onPress={() => navigation.navigate('UpdateTodo', todo[0])}
+        >
           <AntDesign name="edit" size={24} color="#fff" />
-        </View>
+        </TouchableOpacity>
         <View style={styles.iconWrapper}>
           <AntDesign name="delete" size={24} color="#fff" />
         </View>
@@ -99,9 +166,6 @@ const styles = StyleSheet.create({
   },
   title: {
     color: 'white',
-    // position: 'absolute',
-    // bottom: 8,
-    // left: 8,
     marginLeft: 10,
     fontSize: 28,
     fontWeight: 'bold',

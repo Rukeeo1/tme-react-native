@@ -4,23 +4,9 @@ import { TabView, SceneMap } from 'react-native-tab-view';
 
 //  screens
 import  All from './AllTodos'
+import Completed from './CompletedTodos'
+import Filter from './ActiveTods'
 
-
-const Active = () => {
-  return (
-    <View>
-      <Text>Active</Text>
-    </View>
-  );
-};
-
-const Completed = () => {
-  return (
-    <View>
-      <Text>Completed</Text>
-    </View>
-  );
-};
 
 export default function Todos() {
   //this is where you are meant to set header let...
@@ -28,15 +14,15 @@ export default function Todos() {
 
   const [routes] = React.useState([
     { key: 'todos', title: 'Todos' },
-    { key: 'active', title: 'Active' },
     { key: 'completed', title: 'Completed' },
+    { key: 'filter', title: 'Filter' },
   ]);
   const initialLayout = { width: Dimensions.get('window').width };
 
   const renderScene = SceneMap({
     todos: All,
-    active: Active,
     completed: Completed,
+    filter: Filter,
   });
 
   return (

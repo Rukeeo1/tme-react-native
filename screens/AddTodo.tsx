@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -18,26 +18,50 @@ import Input from '../components/Input';
 import Rating from '../components/Rating';
 import Button from '../components/Button';
 
+//redux
+import { useDispatch } from 'react-redux';
+import { addTodo, updateTodo } from '../store/actions/todos';
+
+// navigation
+import { useNavigation, useRoute } from '@react-navigation/native';
+
 export default function AddTodo() {
-  const [ratingValue, saveRatingValue] = useState(2);
+  const [ratingValue, saveRatingValue] = useState(1);
   const [date, setDate] = useState(new Date(1598051730000));
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [checkBoxState, setCheckBoxState] = useState(false);
+  const [imageUri, setImageUri] = useState('')
   const [todo, setTodo] = useState({
     title: '',
     description: '',
   });
 
-  const handleDate = (date) => {
-    console.log(date.target);
-  };
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { params, name } = route;
+
+  useEffect(() => {
+    if (name === 'UpdateTodo') {
+      setTodo({
+        title: params?.title,
+        description: params?.description,
+      });
+      setCheckBoxState(params?.isRecurring);
+      saveRatingValue(params?.priority);
+      setDate(new Date(params?.dueDate));
+    }
+  }, []);
+
+  const handleDate = (date) => {};
 
   const handleChange = (e: string, inputName: string) => {
     setTodo({
       ...todo,
       [inputName]: e,
     });
-  }; // i have a handle change...
+  };
+
+  const dispatch = useDispatch();
   const submitTodo = () => {
     const todoItem = {
       title: todo.title,
@@ -45,29 +69,39 @@ export default function AddTodo() {
       priority: ratingValue,
       isRecurring: checkBoxState,
       dueDate: date,
-      isCompleted: false
+      isCompleted: false,
+      imageUri: imageUri,
+      id: params?.id
     };
+    if (name === 'UpdateTodo') {
+      dispatch(updateTodo(todoItem,navigation))
+    } else {
+      dispatch(addTodo(todoItem, navigation));
+    }
   };
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <ImageSelectorComponent storeImage={() => {}}/>
+        <ImageSelectorComponent storeImage={setImageUri} />
         <View style={{ paddingVertical: 30 }}>
-          <Text>Title</Text>
+          <Text style={styles.title}>Title</Text>
           <Input
             placeholder="Give this todo a title"
             handleChange={(e) => handleChange(e, 'title')}
+            value={todo.title}
           />
-          <Text style={{ marginTop: 30 }}>Description</Text>
+          <Text style={[{ marginTop: 30 }, styles.title]}>Description</Text>
           <Input
             placeholder="Describe the task to be completed"
             handleChange={(e) => handleChange(e, 'description')}
             multiline
             returnKeyType="done"
+            value={todo.description}
           />
           <View style={styles.datePickerContainer}>
             <View style={{ flexDirection: 'row' }}>
-              <Text>Due Date:</Text>
+              <Text style={styles.title}>Due Date:</Text>
               <Text style={{ marginLeft: 10, color: 'grey' }}>
                 {date.toLocaleDateString()}
               </Text>
@@ -89,18 +123,13 @@ export default function AddTodo() {
             )}
           </View>
           <View style={{ marginTop: 10 }}>
-            <View
-              style={{
-                alignItems: 'center',
-                marginTop: 10,
-                borderBottomWidth: 0.3,
-                borderBottomColor: 'grey',
-                paddingVertical: 5,
-              }}
-            >
+            <View style={styles.priority}>
               <Text style={{ fontWeight: '500' }}>Set Todo Priority</Text>
             </View>
-            <Rating saveRatingValue={saveRatingValue} />
+            <Rating
+              saveRatingValue={saveRatingValue}
+              ratingValue={ratingValue}
+            />
           </View>
           <View style={styles.checkBoxContainer}>
             <CheckBox
@@ -109,11 +138,19 @@ export default function AddTodo() {
               onPress={() => setCheckBoxState(!checkBoxState)}
             />
           </View>
-          <Button
-            title="Add Todo"
-            handleOnPress={() => submitTodo()}
-            buttonStyle={styles.btnStyle}
-          />
+          {name === 'UpdateTodo' ? (
+            <Button
+              title="Update Todo"
+              handleOnPress={() => submitTodo()}
+              buttonStyle={styles.btnStyle}
+            />
+          ) : (
+            <Button
+              title="Add Todo"
+              handleOnPress={() => submitTodo()}
+              buttonStyle={styles.btnStyle}
+            />
+          )}
         </View>
       </ScrollView>
     </View>
@@ -166,5 +203,15 @@ const styles = StyleSheet.create({
   },
   btnStyle: {
     marginTop: '10%',
+  },
+  priority: {
+    alignItems: 'center',
+    marginTop: 10,
+    borderBottomWidth: 0.3,
+    borderBottomColor: 'grey',
+    paddingVertical: 5,
+  },
+  title: {
+    fontWeight: '600',
   },
 });
