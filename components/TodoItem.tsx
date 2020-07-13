@@ -10,31 +10,35 @@ interface ITodo {
   dueDate: string;
   isCompleted: boolean;
   isRecurring: boolean;
-  id: string,
+  id: string;
   priority: number;
 }
 
-const imageSource =
-  'https://media-cdn.tripadvisor.com/media/photo-s/01/37/60/0c/me-and-my-husband-lekki.jpg';
+const imageSource = 'https://www.w3schools.com/html/img_girl.jpg';
 
-function TodoItem({todo}: ITodo) {
-
+function TodoItem({ todo }: ITodo) {
   const navigation = useNavigation();
+  const truncateTitle = (title) => {
+    return title.length > 10 ? title.slice(0, 10) : title;
+  };
 
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => navigation.navigate('TodoDetails',todo)}
+      onPress={() => navigation.navigate('TodoDetails', todo)}
     >
       <View style={styles.imageContainer}>
-        <Image source={{ uri: todo?.imageUri || imageSource }} style={styles.image} />
+        <Image
+          source={{ uri: todo?.imageUri || imageSource }}
+          style={styles.image}
+        />
       </View>
 
       <View style={styles.todoDetails}>
         <Status todo={todo} />
         <View style={{ width: '100%', paddingVertical: 10 }}>
           <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-            {todo?.title}
+            {truncateTitle(todo?.title)}
           </Text>
           <View style={{ marginTop: 10 }}>
             <Text style={{ color: 'grey' }}>
@@ -61,8 +65,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-  
- 
   },
   image: {
     height: 80,
