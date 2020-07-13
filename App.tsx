@@ -19,6 +19,7 @@ export type RootStackParamList = {
   Todos: undefined;
   TodoDetails: undefined;
   AddTodo: undefined;
+  UpdateTodo: undefined;
 };
 
 // create stack navigator
@@ -59,6 +60,7 @@ export default function App() {
           />
           <Screen name="TodoDetails" component={TodoDetails} />
           <Screen name="AddTodo" component={AddTodo} />
+          <Screen name="UpdateTodo" component={AddTodo} />
         </Navigator>
       </NavigationContainer>
     </Provider>
