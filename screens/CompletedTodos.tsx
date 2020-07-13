@@ -23,7 +23,7 @@ export default function AllTodos() {
     dispatch(fetchTodos());
   }, []);
   const { todos } = useSelector((state) => state?.todos);
-  
+
   const completedTodos = todos?.filter((todo: ITodo, index: number) => {
     if (todo.isCompleted) {
       return (
@@ -34,11 +34,19 @@ export default function AllTodos() {
     }
   });
 
-
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView contentContainerStyle={styles.container}>
-        {completedTodos.length > 0 ? completedTodos : <EmtpyState />}
+        {
+          todos?.map((todo, index) => {
+            return (
+              <React.Fragment key={index}>
+                {todo.isCompleted && <TodoItem todo={todo} />}
+              </React.Fragment>
+            );
+          })
+        }
+        {completedTodos.length < 1 ? <Empty /> : null}
       </ScrollView>
       <Navigation />
     </View>
