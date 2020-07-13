@@ -5,9 +5,11 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 import Todos from '../../screens/Todos';
 
+import handleLoading from './handleLoading'
 
 
 export const fetchTodos = () => async (dispatch) => {
+  dispatch(handleLoading())
   try {
     const response = await axios.get(
       `https://react-native-test-tme.firebaseio.com/todos.json`
@@ -27,9 +29,11 @@ export const fetchTodos = () => async (dispatch) => {
   } catch (error) {
     alert('there was an error');
   }
+  dispatch(handleLoading())
 };
 
 export const addTodo = (payload, navigation) => async (dispatch) => {
+  dispatch(handleLoading())
   try {
     let data = JSON.stringify(payload);
     await axios.post(
@@ -42,6 +46,7 @@ export const addTodo = (payload, navigation) => async (dispatch) => {
   } catch (error) {
     alert(error.message || error.response.message);
   }
+  dispatch(handleLoading())
 };
 
 export const filterTodo = (query: string) => async (
@@ -76,15 +81,9 @@ export const filterTodo = (query: string) => async (
         break;
 
       case 'overdue':
-        // sortedTodos = todos?.map((todo) => {
-        //   const today = new Date().getTime();
-        //   const dueDate = new Date().getTime();
-        //   if (!todo.isCompleted && dueDate < today) {
-        //     return todo;
-        //   }
-        // });
+ 
         const today = new Date().getTime();
-        console.log(new Date(),'this is today')
+       
         sortedTodos = todos?.filter((todo) => {
           const dueDate = new Date(todo.dueDate).getTime()
           console.log(dueDate,'this is due date')
@@ -104,12 +103,13 @@ export const filterTodo = (query: string) => async (
     });
   } catch (error) {
     const errorMessage = error.response || error.message;
-    alert();
+    alert(errorMessage);
   }
 };
 
 export const updateTodo = (data, navigation) => async (dispatch, store) => {
   const { todos } = store().todos;
+  dispatch(handleLoading())
 
   try {
     const response = await axios.put(
@@ -119,30 +119,17 @@ export const updateTodo = (data, navigation) => async (dispatch, store) => {
     alert('Todo updated sucessfully');
     dispatch(fetchTodos());
 
-    // const updatedTodoLists = todos.map(todo => {
 
-    //   console.log(data.id,'this is data and id')
-    //   if(todo.id == data.id){
-    //     console.log(todo,'+++++++++++=====')
-    //     todo = data
-    //   }
-    //   return todo
-    // })
-    // console.log(updatedTodoLists,'updated todo lists')
-
-    // dispatch({
-    //   type: UPDATE_TODO,
-    //   payload: updatedTodoLists,
-    // });
-    // find todo in the list of ids and return new array
     navigation.navigate('Todos');
   } catch (error) {}
+  dispatch(handleLoading())
 };
 
 export const deleteTodo = (id: string, navigation) => async (
   dispatch,
   store
 ) => {
+  dispatch(handleLoading())
   const { todos } = store().todos;
   try {
     const response = await axios.delete(
@@ -155,4 +142,5 @@ export const deleteTodo = (id: string, navigation) => async (
 
     dispatch(fetchTodos());
   } catch (error) {}
+  dispatch(handleLoading())
 };
