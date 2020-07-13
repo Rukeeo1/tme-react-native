@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,6 +13,10 @@ import Button from '../components/Button';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
+
+//
+import {useDispatch} from 'react-redux'
+import { signUp  } from '../store/actions/user'
 
 // navigation props type
 type SignUpScreenNavigationProp = StackNavigationProp<
@@ -29,6 +33,27 @@ type Props = {
 };
 
 export default function SignUp(props: Props) {
+  const [user, setUser] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
+
+  const dispatch = useDispatch()
+
+  const handleChange = (e: string, inputName: string) => {
+    setUser({
+      ...user,
+      [inputName]: e,
+    });
+  };
+
+  const submitUser = () => {
+    
+    dispatch(signUp(user))
+  }
+
+ 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
@@ -46,19 +71,29 @@ export default function SignUp(props: Props) {
         </View>
 
         <View style={styles.input}>
-          <TextInput placeholder="Full Name" />
+          <TextInput
+            placeholder="Full Name"
+            onChangeText={(e) => handleChange(e, 'name')}
+          />
         </View>
         <View style={styles.input}>
-          <TextInput placeholder="Email" />
+          <TextInput
+            placeholder="Email"
+            onChangeText={(e) => handleChange(e, 'email')}
+          />
         </View>
         <View style={styles.input}>
-          <TextInput placeholder="Password" />
+          <TextInput
+            placeholder="Password"
+            onChangeText={(e) => handleChange(e, 'password')}
+            secureTextEntry={true}
+          />
         </View>
       </View>
       <View style={{ width: '100%', alignItems: 'center' }}>
         <Button
           title="SignUp"
-          handleOnPress={() => {}}
+          handleOnPress={submitUser}
           buttonStyle={styles.buttonStyle}
         />
       </View>
@@ -74,8 +109,7 @@ const styles = StyleSheet.create({
     // justifyContent:'center'
   },
   header: {
-      marginTop: '50%'
-
+    marginTop: '50%',
   },
   input: {
     borderBottomColor: 'grey',

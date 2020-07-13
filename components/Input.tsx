@@ -6,6 +6,7 @@ type Props = {
   handleChange: (e: string) => void;
   multiline?: boolean;
   returnKeyType?: string;
+  value?: string
 };
 
 export default function Input({
@@ -13,6 +14,7 @@ export default function Input({
   handleChange,
   multiline,
   returnKeyType,
+  value
 }: Props) {
   return (
     <View style={styles.input}>
@@ -21,6 +23,8 @@ export default function Input({
         onChangeText={handleChange}
         multiline={multiline}
         onBlur={() => Keyboard.dismiss()}
+        value={value}
+        style={{color:'grey'}}
       />
     </View>
   );

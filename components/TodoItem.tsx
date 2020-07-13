@@ -2,38 +2,43 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import Status from './Status';
 
 interface ITodo {
   title: string;
   description: string;
   dueDate: string;
   isCompleted: boolean;
+  isRecurring: boolean;
+  id: string;
+  priority: number;
 }
 
-const imageSource =
-  'https://media-cdn.tripadvisor.com/media/photo-s/01/37/60/0c/me-and-my-husband-lekki.jpg';
+const imageSource = 'https://www.w3schools.com/html/img_girl.jpg';
 
-function TodoItem(props) {
-  const { todo } = props;
-  // 23 Feb 2020 -
-
+function TodoItem({ todo }: ITodo) {
   const navigation = useNavigation();
+  const truncateTitle = (title) => {
+    return title.length > 10 ? title.slice(0, 10) : title;
+  };
 
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => navigation.navigate('TodoDetails')}
+      onPress={() => navigation.navigate('TodoDetails', todo)}
     >
       <View style={styles.imageContainer}>
-        <Image source={{ uri: imageSource }} style={styles.image} />
+        <Image
+          source={{ uri: todo?.imageUri || imageSource }}
+          style={styles.image}
+        />
       </View>
+
       <View style={styles.todoDetails}>
-        <View style={styles.statusContainer}>
-          <Text style={styles.statusText}>Completed</Text>
-        </View>
+        <Status todo={todo} />
         <View style={{ width: '100%', paddingVertical: 10 }}>
           <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-            {todo?.title}
+            {truncateTitle(todo?.title)}
           </Text>
           <View style={{ marginTop: 10 }}>
             <Text style={{ color: 'grey' }}>
@@ -42,7 +47,7 @@ function TodoItem(props) {
           </View>
         </View>
         <Text style={{ color: 'grey', fontSize: 10, fontWeight: '300' }}>
-          {todo?.dueDate}
+          {new Date(todo?.dueDate).toDateString()}
         </Text>
       </View>
     </TouchableOpacity>

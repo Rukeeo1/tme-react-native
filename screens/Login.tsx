@@ -6,14 +6,18 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  Button,
   TouchableOpacity,
 } from 'react-native';
 import { validateForm } from '../helpers/validations';
+import { EvilIcons } from '@expo/vector-icons';
 
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
+
+//redux
+import { login } from '../store/actions/user';
+import { useDispatch, useSelector } from 'react-redux';
 
 // navigation props type
 type LoginScreenNavigationProp = StackNavigationProp<
@@ -50,10 +54,16 @@ export default function Login(props: Props) {
     });
   };
 
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const { loading } = useSelector((state) => state);
+  console.log(loading, 'this is loading');
+
   const handleLogin = () => {
     const form = validateForm(userDetails);
     if (form.isValid) {
       //submit form
+      dispatch(login(userDetails, navigation));
       return;
     }
     setErrors(form);
@@ -64,42 +74,56 @@ export default function Login(props: Props) {
       style={styles.container}
     >
       <Text style={styles.title}>Todo App</Text>
-      <View style={styles.inputStyle}>
-        <TextInput
-          placeholder="Enter your Email"
-          style={styles.textInput}
-          placeholderTextColor={'#fff'}
-          onChangeText={(e) => handleInput(e, 'email')}
-        />
+      <View style={{ width: '60%' }}>
+        <View style={styles.inputStyle}>
+          <TextInput
+            placeholder="Enter your Email"
+            style={styles.textInput}
+            placeholderTextColor={'#fff'}
+            onChangeText={(e) => handleInput(e, 'email')}
+            autoCapitalize="none"
+          />
+        </View>
+        {errors.email ? (
+          <Text style={styles.errorMessage}>Invalid Email Format</Text>
+        ) : null}
       </View>
-      {errors.email ? <Text>Invalid Email Format</Text> : null}
-      <View style={styles.inputStyle}>
-        <TextInput
-          placeholder="Password"
-          style={styles.textInput}
-          placeholderTextColor={'#fff'}
-          onChangeText={(e) => handleInput(e, 'password')}
-        />
+      <View style={{ width: '60%' }}>
+        <View style={styles.inputStyle}>
+          <TextInput
+            placeholder="Password"
+            style={styles.textInput}
+            placeholderTextColor={'#fff'}
+            onChangeText={(e) => handleInput(e, 'password')}
+            autoCapitalize="none"
+            secureTextEntry={true}
+          />
+        </View>
+        {errors.password ? (
+          <Text style={styles.errorMessage}>{errors.password}</Text>
+        ) : null}
       </View>
-      {errors.password ? <Text>{errors.password}</Text> : null}
+
       <View>
         <TouchableOpacity style={styles.loginContainer} onPress={handleLogin}>
-          <Text
-            style={{
-              color: 'white',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-            }}
-          >
-            Login
-          </Text>
+          {loading ? <Text style={{color:'white'}}>... login in</Text> : (
+            <Text
+              style={{
+                color: 'white',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+              }}
+            >
+              Login
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
       <View style={{ flexDirection: 'row', marginTop: 20 }}>
         <Text>New To Travel Meet? </Text>
         <TouchableOpacity
           style={{ height: 20 }}
-          onPress={() => props.navigation.navigate('Todos')}
+          onPress={() => props.navigation.navigate('SignUp')}
         >
           <View>
             <Text style={{ color: 'white' }}>Sign Up</Text>
@@ -122,7 +146,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   inputStyle: {
-    width: '60%',
+    width: '100%',
     borderWidth: 1,
     borderColor: '#999',
     borderRadius: 8,
@@ -143,5 +167,8 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     borderRadius: 8,
+  },
+  errorMessage: {
+    color: '#f78080',
   },
 });

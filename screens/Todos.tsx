@@ -1,26 +1,12 @@
-import React, { useState, version } from 'react';
+import React, { useState, version, useEffect } from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView, SceneMap, TabBar, } from 'react-native-tab-view';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 //  screens
-import  All from './AllTodos'
-
-
-const Active = () => {
-  return (
-    <View>
-      <Text>Active</Text>
-    </View>
-  );
-};
-
-const Completed = () => {
-  return (
-    <View>
-      <Text>Completed</Text>
-    </View>
-  );
-};
+import All from './AllTodos';
+import Completed from './CompletedTodos';
+import Filter from './ActiveTods';
 
 export default function Todos() {
   //this is where you are meant to set header let...
@@ -28,23 +14,50 @@ export default function Todos() {
 
   const [routes] = React.useState([
     { key: 'todos', title: 'Todos' },
-    { key: 'active', title: 'Active' },
     { key: 'completed', title: 'Completed' },
+    { key: 'filter', title: 'Filter' },
   ]);
-  const initialLayout = { width: Dimensions.get('window').width };
+  // const initialLayout = { width: Dimensions.get('window').width };
 
   const renderScene = SceneMap({
     todos: All,
-    active: Active,
     completed: Completed,
+    filter: Filter,
   });
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <View style={styles.headerLeft}>
+          <Text style={styles.headerLeftText}>{route?.params?.name}</Text>
+        </View>
+      ),
+    });
+  }, []);
 
   return (
     <TabView
       navigationState={{ index, routes }}
       renderScene={renderScene}
       onIndexChange={setIndex}
-      initialLayout={initialLayout}
+      // initialLayout={initialLayout}
+      renderTabBar={(props) => (
+        <TabBar
+          {...props}
+          activeColor="black"
+          scrollEnabled
+          inactiveColor="#ccc"
+          indicatorStyle={{ borderBottomWidth: 2 }}
+          style={{ backgroundColor: 'white' }}
+          labelStyle={{
+            textTransform: 'capitalize',
+          }}
+      
+        />
+      )}
+    
     />
   );
 }
@@ -53,4 +66,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  headerLeft: {
+    paddingLeft: 20,
+  },
+  headerLeftText: { fontSize: 17, fontWeight: '500' },
 });

@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
+import { AntDesign } from '@expo/vector-icons'; 
+
 
 type Props = {
     saveRatingValue: Function,
+    ratingValue: number
 }
 
-export default function Rating({saveRatingValue}: Props) {
+export default function Rating({saveRatingValue,ratingValue}: Props) {
   const [defaultRating, setDefaultRating] = useState(2);
   const maxRating = 5;
-  const star =
-    'https://raw.githubusercontent.com/AboutReact/sampleresource/master/star_filled.png';
-  const emptyStar =
-    'https://raw.githubusercontent.com/AboutReact/sampleresource/master/star_corner.png';
+  
   const RatingBar = [];
 
   const handleRating = (rating: number) => {
@@ -26,10 +26,10 @@ export default function Rating({saveRatingValue}: Props) {
         key={i}
         onPress={() => handleRating(i)}
       >
-        <Image
-          style={styles.StarImage}
-          source={i <= defaultRating ? { uri: star } : { uri: emptyStar }}
-        />
+        <>
+      
+        {i <= ratingValue ? <AntDesign name="star" size={24} color="gold" />: <AntDesign name="staro" size={24} color="gold" /> }
+        </>
       </TouchableOpacity>
     );
   }
