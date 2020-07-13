@@ -1,64 +1,53 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, Dimensions, ScrollView } from 'react-native';
 //components
 import TodoItem from '../components/TodoItem';
+import Navigation from '../components/Navigation';
 
-const todos = [
-  {
-    title: 'Laundry',
-    description:
-      "I am using react native swiper. and this error was shown I don't know why. How can it be solved? In the past, there was not a problem like this. Its first time happening. What is wrong?",
-    dueDate: '12-July-2020',
-    isCompleted: false,
-  },
-  {
-    title: 'Date With Aina',
-    description:
-      "I am using react native swiper. and this error was shown I don't know why. How can it be solved? In the past, there was not a problem like this. Its first time happening. What is wrong?",
-    dueDate: '18-July-2020',
-    isCompleted: true,
-  },
-  {
-    title: 'Reading Typescript',
-    description:
-      "I am using react native swiper. and this error was shown I don't know why. How can it be solved? In the past, there was not a problem like this. Its first time happening. What is wrong?",
-    dueDate: '18-July-2020',
-    isCompleted: true,
-  },
-  {
-    title: 'Reading Javascript',
-    description:
-      "I am using react native swiper. and this error was shown I don't know why. How can it be solved? In the past, there was not a problem like this. Its first time happening. What is wrong?",
-    dueDate: '18-July-2020',
-    isCompleted: false,
-  },
-];
+//redux
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchTodos } from '../store/actions/todos';
+import Todos from './Todos';
 
 interface ITodo {
-    title: string,
-    description: string,
-    dueDate: string,
-    isCompleted: boolean
-
+  title: string;
+  description: string;
+  dueDate: string;
+  isCompleted: boolean;
 }
 
 export default function AllTodos() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchTodos());
+  }, []);
+  const { todos } = useSelector((state) => state?.todos);
+  // sort by time
+  const sorted = todos.sort((a: object, b: object) => {
+    const aDates = new Date(a.dueDate).getTime();
+    const bDates = new Date(b.dueDate).getTime();
+    return aDates < bDates ? 1 : -1;
+  });
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {todos.map((todo:ITodo, index) => (
-        <React.Fragment key={index}>
-          <TodoItem todo={todo} />
-        </React.Fragment>
-      ))}
-     
-    </ScrollView>
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        {sorted?.map((todo: ITodo, index: number) => (
+          <React.Fragment key={index}>
+            <TodoItem todo={todo} />
+          </React.Fragment>
+        ))}
+      </ScrollView>
+      <Navigation />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     width: '100%',
     alignItems: 'center',
+    paddingBottom: 60,
   },
 });
