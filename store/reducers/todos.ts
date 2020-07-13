@@ -1,18 +1,35 @@
+import { FETCH_TODOS, FILTER_TODOS, UPDATE_TODO, DELETE_TODO } from '../types';
 const initialState = {
-  todos: {},
+  todos: [],
+  sortedTodos: [],
 };
 
 const todosReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'STORE-TODO':
-      return state;
-
-      break;
+    case FETCH_TODOS:
+      return {
+        ...state,
+        todos: action.payload,
+      };
+    case FILTER_TODOS:
+      return {
+        ...state,
+        sortedTodos: action.payload,
+      };
+    case UPDATE_TODO:
+      return {
+        ...state,
+        todos:action.payload
+      }
+    case DELETE_TODO:
+      return {
+        ...state,
+        todos: action.payload
+      }
 
     default:
       return state;
   }
 };
 
-
-export default todosReducer
+export default todosReducer;
