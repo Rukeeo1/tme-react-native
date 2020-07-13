@@ -16,7 +16,6 @@ export default function Filter({
   modalVisible,
   setModalVisible,
 }) {
-
   return (
     <View style={styles.filter}>
       <TouchableOpacity
@@ -61,14 +60,14 @@ export default function Filter({
               <Text>Pending</Text>
             </TouchableOpacity>
 
-            <TouchableHighlight
+            <TouchableOpacity
               style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
               onPress={() => {
                 setModalVisible(!modalVisible);
               }}
             >
               <Text style={styles.textStyle}>Hide Modal</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
