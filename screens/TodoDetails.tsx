@@ -14,6 +14,7 @@ import { Entypo } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { CheckBox } from 'react-native-elements'; // 0.16.0
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Navigation from '../components/Navigation';
 
 // navigation
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -22,7 +23,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { updateTodo, deleteTodo } from '../store/actions/todos';
 import { useDispatch, useSelector } from 'react-redux';
 const imageSource =
-  'https://media-cdn.tripadvisor.com/media/photo-s/01/37/60/0c/me-and-my-husband-lekki.jpg';
+  'https://www.w3schools.com/html/img_girl.jpg';
 
 export default function TodoDetails() {
   const navigation = useNavigation();
@@ -75,11 +76,11 @@ export default function TodoDetails() {
   };
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
           <ImageBackground
-            source={{ uri: imageSource }}
+            source={{ uri: todo[0]?.imageUri || imageSource  }}
             style={{
               height: 300,
               resizeMode: 'cover',
@@ -90,10 +91,11 @@ export default function TodoDetails() {
               style={styles.linearGradient}
             >
               <Text style={styles.title}>{todo[0]?.title}</Text>
-              <Text style={styles.title}>
+              <Text style={styles.date}>
                 {new Date(todo[0]?.dueDate).toDateString()}
               </Text>
             </LinearGradient>
+            <EditIcon navigation={navigation} todo={todo} />
           </ImageBackground>
           <View>
             <View>
@@ -125,30 +127,25 @@ export default function TodoDetails() {
           </View>
         </View>
       </ScrollView>
-      <View style={{ position: 'absolute', bottom: 10, left: 10 }}>
-        <TouchableOpacity
-          style={styles.iconWrapper}
-          onPress={() => navigation.navigate('AddTodo')}
-        >
-          <Entypo name="add-to-list" size={24} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconWrapper}
-          onPress={() => navigation.navigate('UpdateTodo', todo[0])}
-        >
-          <AntDesign name="edit" size={24} color="#fff" />
-        </TouchableOpacity>
-        <View style={styles.iconWrapper}>
-          <AntDesign name="delete" size={24} color="#fff" />
-        </View>
-      </View>
-    </>
+      <Navigation />
+    </View>
   );
 }
 
+const EditIcon = ({ navigation, todo }) => (
+  <View style={{ position: 'absolute', bottom: 0, right: 10 }}>
+    <TouchableOpacity
+      style={styles.iconWrapper}
+      onPress={() => navigation.navigate('UpdateTodo', todo[0])}
+    >
+      <AntDesign name="edit" size={24} color="#fff" />
+    </TouchableOpacity>
+  </View>
+);
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     alignItems: 'center',
   },
   header: {
@@ -165,6 +162,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
+    position: 'absolute',
+    bottom: 23,
     color: 'white',
     marginLeft: 10,
     fontSize: 28,
@@ -179,5 +178,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 4,
+  },
+  date: {
+    fontSize: 12,
+    marginLeft: 12,
+    color: '#fff',
+    position: 'absolute',
+    bottom: 12,
   },
 });
