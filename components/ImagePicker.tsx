@@ -17,8 +17,8 @@ export default function ImagePickerComponent({storeImage}) {
 
       if (!result.cancelled) {
         setImage(result.uri);
+        storeImage(result.uri)
       }
-      console.log(result);
     } catch (error) {
       console.log(error);
     }
