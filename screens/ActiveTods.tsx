@@ -45,7 +45,7 @@ export default function AllTodos() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor:'#fff' }}>
       <Filter
         handleFilter={handleFilter}
         modalVisible={modalVisible}
