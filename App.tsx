@@ -12,8 +12,6 @@ import AddTodo from './screens/AddTodo';
 import { Provider } from 'react-redux';
 import store from './store';
 
-console.log(store.getState())
-
 //mapping for routes...
 export type RootStackParamList = {
   Login: undefined;
